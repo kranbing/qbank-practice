@@ -138,7 +138,7 @@ function getQuestionDisplay(question) {
 function start(nextMode = 'all') {
   mode = nextMode;
   if (mode === 'wrong') {
-    order = shuffle(questions.filter(q => state.wrongs[q.id]).map(q => q.id));
+    order = shuffle(getWrongQuestionIds());
   } else {
     const unseen = questions.filter(q => !state.answered[q.id]).map(q => q.id);
     const seen = questions.filter(q => state.answered[q.id]).map(q => q.id);
@@ -153,6 +153,11 @@ function render() {
   if (!order.length) {
     current = null;
     $('stem').textContent = mode === 'wrong' ? '暂无错题，继续保持！' : '题库中没有可练习的题目。';
+    if (mode === 'wrong') {
+      $('modePill').textContent = '错题练习';
+      $('nextBtn').textContent = '返回正式练习';
+      $('nextBtn').disabled = false;
+    }
     updateStats();
     return;
   }
@@ -192,6 +197,10 @@ function resetQuestionUi() {
   $('feedback').className = 'feedback';
   $('feedback').textContent = '';
   $('options').innerHTML = '';
+  $('numPill').textContent = '';
+  $('typeBadge').textContent = '';
+  $('chapPill').textContent = '';
+  $('nextBtn').textContent = '下一题';
   $('nextBtn').disabled = true;
   $('submitBtn').disabled = true;
 }
@@ -252,6 +261,9 @@ function submit() {
   $('feedback').className = `feedback ${correct ? 'ok' : 'bad'}`;
   $('feedback').textContent = correct ? '回答正确。' : `回答错误。正确答案：${current.answer}；你的答案：${chosen}`;
   $('submitBtn').disabled = true;
+  if (mode === 'wrong' && getWrongQuestionIds().length === 0) {
+    $('nextBtn').textContent = '返回正式练习';
+  }
   $('nextBtn').disabled = false;
   updateStats();
 }
@@ -261,6 +273,10 @@ function answerContains(answer, label) {
 }
 
 function next() {
+  if (mode === 'wrong' && getWrongQuestionIds().length === 0) {
+    start('all');
+    return;
+  }
   if (!order.length) return;
   if (position + 1 < order.length) {
     position += 1;
@@ -270,9 +286,13 @@ function next() {
   }
 }
 
+function getWrongQuestionIds() {
+  return Object.keys(state.wrongs).filter(id => questionsById.has(id));
+}
+
 function updateStats() {
   const doneCount = Object.keys(state.answered).length;
-  const wrongIds = Object.keys(state.wrongs).filter(id => questionsById.has(id));
+  const wrongIds = getWrongQuestionIds();
   $('done').textContent = doneCount;
   $('acc').textContent = state.totalAttempts ? `${Math.round(state.correctAttempts / state.totalAttempts * 100)}%` : '0%';
   $('wrongCount').textContent = wrongIds.length;
