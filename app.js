@@ -306,8 +306,10 @@ function exportWrongs() {
   const link = document.createElement('a');
   link.href = url;
   link.download = '错题记录.txt';
+  document.body.appendChild(link);
   link.click();
-  URL.revokeObjectURL(url);
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function downloadFile(content, type, filename) {
@@ -316,8 +318,10 @@ function downloadFile(content, type, filename) {
   const link = document.createElement('a');
   link.href = url;
   link.download = filename;
+  document.body.appendChild(link);
   link.click();
-  URL.revokeObjectURL(url);
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function exportProgress() {
