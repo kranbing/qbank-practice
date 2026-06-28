@@ -12,3 +12,5 @@ python -m http.server 8000
 ```
 
 然后访问 <http://localhost:8000>。
+
+题库中的页码已清洗为独立的 `page` 字段，600 道题均有页码；`page_source` 用于区分原文提取、OCR 恢复和范围推断。

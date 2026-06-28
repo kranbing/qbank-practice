@@ -66,6 +66,7 @@ function validateQuestions(data) {
     if (!q || typeof q.id !== 'string' || !q.id || ids.has(q.id)) throw new Error(`第 ${index + 1} 题的 id 缺失或重复`);
     if (typeof q.stem !== 'string' || !q.stem.trim() || !Array.isArray(q.options) || !q.options.length) throw new Error(`题目 ${q.id} 的题干或选项无效`);
     if (typeof q.answer !== 'string') throw new Error(`题目 ${q.id} 的答案无效`);
+    if (typeof q.page !== 'string' || !/^\d+(?:-\d+)?$/.test(q.page)) throw new Error(`题目 ${q.id} 的页码无效`);
     const labels = new Set(q.options.map(option => option.label));
     if (labels.size !== q.options.length || q.options.some(option => typeof option.label !== 'string' || !option.label || typeof option.text !== 'string' || !option.text.trim())) throw new Error(`题目 ${q.id} 存在无效或重复选项`);
     if ([...q.answer].some(label => !labels.has(label)) && !labels.has(q.answer)) throw new Error(`题目 ${q.id} 的答案不在选项中`);
@@ -121,10 +122,11 @@ function normalizeText(value) {
 
 function getQuestionDisplay(question) {
   let stem = normalizeText(question.stem);
-  let page = '';
+  let page = normalizeText(question.page || '');
+  let extractedPage = '';
   const pagePattern = /[【\[({{]?\s*[Pp]\s*(\d+(?:\s*[-－—~～]\s*\d+)?)\s*[】\])}}]?/g;
   stem = stem.replace(pagePattern, (match, number) => {
-    page = number.replace(/\s+/g, '').replace(/[－—~～]/g, '-');
+    extractedPage = number.replace(/\s+/g, '').replace(/[－—~～]/g, '-');
     return '';
   });
   stem = stem
@@ -132,7 +134,7 @@ function getQuestionDisplay(question) {
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
-  return { stem, page };
+  return { stem, page: page || extractedPage };
 }
 
 function start(nextMode = 'all') {
