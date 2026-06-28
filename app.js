@@ -137,6 +137,14 @@ function getQuestionDisplay(question) {
   return { stem, page: page || extractedPage };
 }
 
+function getOptionDisplay(option) {
+  const label = normalizeText(option.label).trim();
+  const text = normalizeText(option.text).trim();
+  return label === text
+    ? escapeHtml(text)
+    : `<b>${escapeHtml(label)}</b>. ${escapeHtml(text)}`;
+}
+
 function start(nextMode = 'all') {
   mode = nextMode;
   if (mode === 'wrong') {
@@ -185,7 +193,7 @@ function render() {
   $('options').innerHTML = current.options.map(option => `
     <label class="opt" data-label="${escapeHtml(option.label)}">
       <input name="ans" type="${inputType}" value="${escapeHtml(option.label)}">
-      <div><b>${escapeHtml(normalizeText(option.label))}</b>. ${escapeHtml(normalizeText(option.text))}</div>
+      <div>${getOptionDisplay(option)}</div>
     </label>`).join('');
   document.querySelectorAll('.opt').forEach(option => {
     option.addEventListener('change', updateSelectedStyles);
