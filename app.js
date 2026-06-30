@@ -183,7 +183,6 @@ function resetQuestionUi() {
   $('feedback').className = 'feedback';
   $('feedback').textContent = '';
   $('options').innerHTML = '';
-  $('numPill').textContent = '';
   $('typeBadge').textContent = '';
   $('chapPill').textContent = '';
   $('nextBtn').textContent = '下一题';
@@ -219,7 +218,6 @@ function render() {
 
   const display = getQuestionDisplay(current);
   $('modePill').textContent = mode === 'wrong' ? '错题练习' : mode === 'favorite' ? '我的收藏' : '未做题目';
-  $('numPill').textContent = `题目 ${position + 1} / ${order.length}`;
   $('typeBadge').textContent = normalizeText(current.type);
   $('chapPill').textContent = `第${current.chapter}章${display.page ? ` · P${display.page}` : ''}`;
   $('stem').textContent = display.stem;
@@ -338,17 +336,13 @@ function updateStats() {
   const doneCount = Object.keys(state.answered).length;
   const wrongIds = getWrongQuestionIds();
   const favoriteIds = getFavoriteQuestionIds();
-  const remaining = Math.max(0, questions.length - doneCount);
   const percent = questions.length ? doneCount / questions.length * 100 : 0;
 
   $('done').textContent = doneCount;
   $('acc').textContent = state.totalAttempts ? `${Math.round(state.correctAttempts / state.totalAttempts * 100)}%` : '0%';
   $('wrongCount').textContent = wrongIds.length;
-  $('left').textContent = remaining;
   $('favoriteCount').textContent = favoriteIds.length;
-  $('totalProgressText').textContent = `${doneCount} / ${questions.length}`;
   $('bar').style.width = `${percent}%`;
-  $('totalBar').style.width = `${percent}%`;
 
   if (!wrongIds.length) {
     $('wrongList').textContent = '暂无错题';

@@ -40,15 +40,14 @@
     .feedback.bad { display:block; background:#fff1f0; color:var(--bad); }
     .feedback.info { display:block; background:#eff6ff; color:#1d4ed8; }
     .muted { color:var(--muted); }
-    .remaining { background:#fff4f3; border:1px solid #fecaca; border-radius:14px; padding:13px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
     .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0 14px; }
     .stat { background:#f8fafc; border-radius:12px; padding:12px; }
     .stat-button { width:100%; text-align:left; border-radius:12px; padding:12px; }
     .stat-button:hover, .stat-button:focus-visible { background:#f1f5f9; outline:2px solid #d6a1a8; }
     .big { font-size:24px; line-height:1.2; font-weight:800; }
-    .sideProgress { margin:10px 0 16px; }
-    .progressLabel { display:flex; justify-content:space-between; gap:8px; font-size:14px; }
-    .sideProgress .progress { margin:7px 0 0; }
+    .statLabel { display:flex; justify-content:space-between; align-items:center; gap:6px; }
+    .statArrow { color:var(--brand); font-size:12px; font-weight:700; }
+    .stat-button .big { display:block; margin-top:2px; }
     .favoriteToggle.active, .miniFavorite.active { background:#fff3cd; color:#7a4d00; }
     .wrongList { max-height:340px; overflow-y:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding-right:7px; }
     .wrongItem { padding:10px 0; border-bottom:1px solid var(--line); font-size:14px; overflow-wrap:anywhere; }
@@ -69,7 +68,6 @@
       <div class="row" style="justify-content:space-between">
         <div class="row">
           <span class="pill" id="modePill">未做题目</span>
-          <span class="pill" id="numPill"></span>
           <span class="pill" id="chapPill"></span>
         </div>
         <div class="row">
@@ -90,19 +88,14 @@
     </main>
     <aside class="card side">
       <h3 style="margin-top:0">练习统计</h3>
-      <div class="remaining">
-        <span class="muted">未做题目</span>
-        <strong class="big" id="left">0</strong>
-      </div>
-      <div class="sideProgress">
-        <div class="progressLabel"><span class="muted">总进度（已做题目 / 总题目）</span><strong id="totalProgressText">0 / 0</strong></div>
-        <div class="progress"><div class="bar" id="totalBar"></div></div>
-      </div>
       <div class="stats">
         <div class="stat"><div class="muted">已做题目</div><div class="big" id="done">0</div></div>
         <div class="stat"><div class="muted">作答正确率</div><div class="big" id="acc">0%</div></div>
         <div class="stat"><div class="muted">错题</div><div class="big" id="wrongCount">0</div></div>
-        <button class="stat stat-button" id="favoriteStat" title="点击查看收藏题目"><span class="muted">收藏题目 ↗</span><span class="big" id="favoriteCount">0</span></button>
+        <button class="stat stat-button" id="favoriteStat" title="点击查看收藏题目">
+          <span class="statLabel"><span class="muted">收藏题目</span><span class="statArrow">查看 →</span></span>
+          <span class="big" id="favoriteCount">0</span>
+        </button>
       </div>
       <div class="row">
         <button id="exportBtn">导出错题</button>
@@ -115,6 +108,6 @@
       <div id="wrongList" class="wrongList muted">暂无错题</div>
     </aside>
   </div>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=20260630-3" defer></script>
 </body>
 </html>
