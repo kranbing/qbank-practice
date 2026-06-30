@@ -7,28 +7,30 @@
   <style>
     :root { --bg:#f7f7fb; --card:#fff; --text:#222; --muted:#667085; --line:#e5e7eb; --brand:#8b1d2c; --ok:#047857; --bad:#b42318; }
     * { box-sizing:border-box; }
-    body { margin:0; font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC","Source Han Sans SC",sans-serif; background:var(--bg); color:var(--text); line-height:1.65; font-synthesis:none; }
+    body { margin:0; font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC","Source Han Sans SC",sans-serif; background:var(--bg); color:var(--text); line-height:1.65; }
     header { padding:24px 16px; text-align:center; }
     h1 { margin:0; font-size:clamp(24px,4vw,36px); }
+    h3 { margin:22px 0 10px; }
     .sub { color:var(--muted); margin-top:6px; }
-    .wrap { max-width:1100px; margin:0 auto 40px; padding:0 16px; display:grid; grid-template-columns:1fr 300px; gap:16px; }
+    .wrap { max-width:1100px; margin:0 auto 40px; padding:0 16px; display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:16px; }
     .card { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 10px 24px rgba(0,0,0,.05); }
-    .main { padding:22px; }
+    .main { padding:22px; min-width:0; }
     .side { padding:18px; align-self:start; position:sticky; top:12px; }
     .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    button { border:0; border-radius:999px; padding:10px 15px; cursor:pointer; background:#f1f5f9; color:#111; font-size:14px; }
+    button { border:0; border-radius:999px; padding:10px 15px; cursor:pointer; background:#f1f5f9; color:#111; font:inherit; font-size:14px; }
     button.primary { background:var(--brand); color:#fff; }
     button.danger { background:#fee4e2; color:var(--bad); }
     button:disabled { opacity:.5; cursor:not-allowed; }
+    button[hidden] { display:none; }
     .pill { font-size:13px; color:var(--muted); background:#f2f4f7; border-radius:999px; padding:5px 10px; }
     .progress { height:10px; background:#eee; border-radius:999px; overflow:hidden; margin:16px 0; }
     .bar { height:100%; width:0; background:var(--brand); transition:.25s; }
-    .question-heading { display:flex; align-items:center; gap:10px; margin:20px 0 10px; }
-    .type-badge { display:inline-flex; align-items:center; min-height:32px; padding:4px 13px; border-radius:9px; background:var(--brand); color:#fff; font-size:15px; font-weight:700; letter-spacing:.08em; }
-    .stem { white-space:pre-wrap; font-weight:600; font-size:20px; margin:10px 0 20px; font-family:inherit; }
+    .question-heading { margin:18px 0 20px; white-space:pre-wrap; font-weight:600; font-size:20px; }
+    .type-badge { display:inline-flex; vertical-align:.15em; align-items:center; min-height:30px; margin-right:10px; padding:3px 11px; border-radius:8px; background:var(--brand); color:#fff; font-size:14px; font-weight:700; letter-spacing:.06em; }
+    .stem { font:inherit; }
     .options { display:grid; gap:12px; }
-    .opt { display:grid; grid-template-columns:32px 1fr; gap:10px; border:1.5px solid var(--line); border-radius:14px; padding:13px 14px; cursor:pointer; background:#fff; white-space:pre-wrap; font-family:inherit; font-size:16px; font-weight:400; }
-    .opt b { font-family:inherit; font-weight:700; }
+    .opt { display:grid; grid-template-columns:32px minmax(0,1fr); gap:10px; border:1.5px solid var(--line); border-radius:14px; padding:13px 14px; cursor:pointer; background:#fff; white-space:pre-wrap; font-size:16px; }
+    .opt b { font-weight:700; }
     .opt input { margin-top:7px; accent-color:var(--brand); transform:scale(1.1); }
     .opt.sel { border-color:var(--brand); background:#fff7f7; }
     .opt.correct { border-color:#84c7a7; background:#ecfdf3; }
@@ -38,12 +40,23 @@
     .feedback.bad { display:block; background:#fff1f0; color:var(--bad); }
     .feedback.info { display:block; background:#eff6ff; color:#1d4ed8; }
     .muted { color:var(--muted); }
-    .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0; }
+    .remaining { background:#fff4f3; border:1px solid #fecaca; border-radius:14px; padding:13px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+    .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0 14px; }
     .stat { background:#f8fafc; border-radius:12px; padding:12px; }
-    .big { font-size:24px; font-weight:800; }
-    .wrongItem { padding:10px 0; border-bottom:1px solid var(--line); font-size:14px; }
+    .stat-button { width:100%; text-align:left; border-radius:12px; padding:12px; }
+    .stat-button:hover, .stat-button:focus-visible { background:#f1f5f9; outline:2px solid #d6a1a8; }
+    .big { font-size:24px; line-height:1.2; font-weight:800; }
+    .sideProgress { margin:10px 0 16px; }
+    .progressLabel { display:flex; justify-content:space-between; gap:8px; font-size:14px; }
+    .sideProgress .progress { margin:7px 0 0; }
+    .favoriteToggle.active, .miniFavorite.active { background:#fff3cd; color:#7a4d00; }
+    .wrongList { max-height:340px; overflow-y:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding-right:7px; }
+    .wrongItem { padding:10px 0; border-bottom:1px solid var(--line); font-size:14px; overflow-wrap:anywhere; }
+    .wrongItem:last-child { border-bottom:0; }
     .wrongItem b { color:var(--bad); }
-    @media(max-width:860px) { .wrap { grid-template-columns:1fr; } .side { position:static; } }
+    .wrongTitle { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .miniFavorite { flex:0 0 auto; padding:4px 8px; font-size:12px; }
+    @media(max-width:860px) { .wrap { grid-template-columns:1fr; } .side { position:static; } .wrongList { max-height:300px; } }
   </style>
 </head>
 <body>
@@ -55,32 +68,41 @@
     <main class="card main">
       <div class="row" style="justify-content:space-between">
         <div class="row">
-          <span class="pill" id="modePill">未做优先</span>
+          <span class="pill" id="modePill">未做题目</span>
           <span class="pill" id="numPill"></span>
           <span class="pill" id="chapPill"></span>
         </div>
         <div class="row">
-          <button id="randomBtn">重新随机</button>
-          <button id="wrongBtn">错题练习</button>
+          <button id="returnBtn" hidden>← 返回未做题</button>
+          <button id="randomBtn">重新随机未做题</button>
+          <button id="wrongBtn">查看错题</button>
         </div>
       </div>
-      <div class="progress"><div class="bar" id="bar"></div></div>
-      <div class="question-heading"><span class="type-badge" id="typeBadge"></span></div>
-      <div class="stem" id="stem">加载中…</div>
+      <div class="progress" title="总进度"><div class="bar" id="bar"></div></div>
+      <div class="question-heading"><span class="type-badge" id="typeBadge"></span><span class="stem" id="stem">加载中…</span></div>
       <div class="options" id="options"></div>
       <div class="feedback" id="feedback"></div>
       <div class="row" style="margin-top:18px">
         <button class="primary" id="submitBtn" disabled>提交答案</button>
         <button id="nextBtn" disabled>下一题</button>
+        <button id="favoriteToggle" disabled aria-pressed="false">☆ 收藏</button>
       </div>
     </main>
     <aside class="card side">
       <h3 style="margin-top:0">练习统计</h3>
+      <div class="remaining">
+        <span class="muted">未做题目</span>
+        <strong class="big" id="left">0</strong>
+      </div>
+      <div class="sideProgress">
+        <div class="progressLabel"><span class="muted">总进度（已做题目 / 总题目）</span><strong id="totalProgressText">0 / 0</strong></div>
+        <div class="progress"><div class="bar" id="totalBar"></div></div>
+      </div>
       <div class="stats">
         <div class="stat"><div class="muted">已做题目</div><div class="big" id="done">0</div></div>
         <div class="stat"><div class="muted">作答正确率</div><div class="big" id="acc">0%</div></div>
         <div class="stat"><div class="muted">错题</div><div class="big" id="wrongCount">0</div></div>
-        <div class="stat"><div class="muted">未做题目</div><div class="big" id="left">0</div></div>
+        <button class="stat stat-button" id="favoriteStat" title="点击查看收藏题目"><span class="muted">收藏题目 ↗</span><span class="big" id="favoriteCount">0</span></button>
       </div>
       <div class="row">
         <button id="exportBtn">导出错题</button>
@@ -90,7 +112,7 @@
         <button class="danger" id="clearBtn">清空错题</button>
       </div>
       <h3>错题记录</h3>
-      <div id="wrongList" class="muted">暂无错题</div>
+      <div id="wrongList" class="wrongList muted">暂无错题</div>
     </aside>
   </div>
   <script src="app.js" defer></script>
